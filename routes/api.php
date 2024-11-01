@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\admin\DashboardController;
 use App\Http\Controllers\admin\ServiceController;
+use App\Http\Controllers\admin\TempImageController;
 
 //route
 Route::post('/authenticate',[AuthenticationController::class, 'authenticate'])->name('authenticate');
@@ -25,6 +26,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     //service
     Route::get('/services',[ServiceController::class, 'index']);
     Route::post('/services',[ServiceController::class, 'store']);
+
+    //temp image upload et installation de composer require intervention/image
+    Route::post('/temp-images',[TempImageController::class, 'store']);
 
 
 
