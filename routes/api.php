@@ -4,8 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\admin\DashboardController;
-
-
+use App\Http\Controllers\admin\ServiceController;
 
 //route
 Route::post('/authenticate',[AuthenticationController::class, 'authenticate'])->name('authenticate');
@@ -22,6 +21,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     //logout
     Route::get('/logout',[AuthenticationController::class, 'logout'])->name('logout');
+
+    //service
+    Route::post('/services',[ServiceController::class, 'store']);
+
 
 
 });
