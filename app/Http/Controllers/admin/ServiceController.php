@@ -15,7 +15,14 @@ class ServiceController extends Controller
      */
     public function index()
     {
-        //
+        // services par date de ceration decs
+        $services = Service::orderBy('created_at', 'desc')->get();
+        return response()->json([
+            'status' => true,
+            'data' => $services,
+
+        ]);
+
     }
 
     /**

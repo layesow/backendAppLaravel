@@ -23,6 +23,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/logout',[AuthenticationController::class, 'logout'])->name('logout');
 
     //service
+    Route::get('/services',[ServiceController::class, 'index']);
     Route::post('/services',[ServiceController::class, 'store']);
 
 
