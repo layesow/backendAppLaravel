@@ -26,6 +26,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     //service
     Route::get('/services',[ServiceController::class, 'index']);
     Route::post('/services',[ServiceController::class, 'store']);
+    Route::put('/services/{id}',[ServiceController::class, 'update']);
 
     //temp image upload et installation de composer require intervention/image
     Route::post('/temp-images',[TempImageController::class, 'store']);
