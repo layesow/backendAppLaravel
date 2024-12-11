@@ -6,9 +6,14 @@ use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\admin\DashboardController;
 use App\Http\Controllers\admin\ServiceController;
 use App\Http\Controllers\admin\TempImageController;
+use App\Http\Controllers\front\ServiceController as FrontServiceController;
 
 //route
 Route::post('/authenticate',[AuthenticationController::class, 'authenticate'])->name('authenticate');
+
+Route::get('/get-services',[FrontServiceController::class, 'index']);
+Route::get('/get-latest-services',[FrontServiceController::class, 'latestServices']);
+
 
 /* Route::get('/user', function (Request $request) {
     return $request->user();
