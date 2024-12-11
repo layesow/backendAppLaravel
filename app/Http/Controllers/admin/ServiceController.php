@@ -81,9 +81,6 @@ class ServiceController extends Controller
 
                 $model->image = $fileName;
                 $model->save();
-
-
-
             }
         }
 
