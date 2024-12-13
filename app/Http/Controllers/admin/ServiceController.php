@@ -199,7 +199,6 @@ class ServiceController extends Controller
     public function destroy($id)
     {
         $service = Service::find($id);
-        $service = Service::find($id);
         if($service == null){
             return response()->json([
                 'status' => false,
