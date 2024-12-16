@@ -10,6 +10,7 @@ use App\Http\Controllers\admin\ServiceController;
 use App\Http\Controllers\admin\TempImageController;
 use App\Http\Controllers\front\ServiceController as FrontServiceController;
 use App\Http\Controllers\front\ProjectController as FrontProjectController;
+use App\Http\Controllers\front\ArticleController as FrontArticleController;
 
 //route
 Route::post('/authenticate',[AuthenticationController::class, 'authenticate'])->name('authenticate');
@@ -21,8 +22,8 @@ Route::get('/get-projects',[FrontProjectController::class, 'index']);
 Route::get('/get-latest-projects',[FrontProjectController::class, 'latestProjects']);
 
 
-//Route::get('/get-articles',[FrontProjectController::class, 'index']);
-//Route::get('/get-latest-articles',[FrontProjectController::class, 'latestProjects']);
+Route::get('/get-articles',[FrontArticleController::class, 'index']);
+Route::get('/get-latest-articles',[FrontArticleController::class, 'latestArticles']);
 
 
 /* Route::get('/user', function (Request $request) {
