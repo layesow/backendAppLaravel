@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Project;
+use App\Models\Article;
 use App\Models\TempImage;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -12,28 +12,28 @@ use Intervention\Image\ImageManager;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Drivers\Gd\Driver;
 
-class ProjectController extends Controller
+class ArticleController extends Controller
 {
-    // methode return all project
+    //recuperation des articles
     public function index(){
-        $projects = Project::orderBy('created_at', 'desc')->get();
+        $articles = Article::orderBy('created_at', 'desc')->get();
         return response()->json([
             'status' => true,
-            'data' => $projects,
+            'data' => $articles,
 
         ]);
     }
 
-    // methode insert project in db
+    //creation de articles store
     public function store(Request $request){
 
-        //dammy title
         $request->merge(['slug' => Str::slug($request->slug)]);
 
         $validator = Validator::make($request->all(), [
             'title' => 'required',
-            'slug' => 'required|unique:projects,slug',
+            'slug' => 'required|unique:articles,slug',
         ]);
+
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
@@ -41,16 +41,13 @@ class ProjectController extends Controller
             ]);
         }
 
-        $project = new Project();
-        $project->title = $request->title;
-        $project->slug =Str::slug($request->slug);
-        $project->short_desc = $request->short_desc;
-        $project->content = $request->content;
-        $project->construction_type = $request->construction_type;
-        $project->sector = $request->sector;
-        $project->location = $request->location;
-        $project->status = $request->status;
-        $project->save();
+        $article = new Article();
+        $article->title = $request->title;
+        $article->slug =Str::slug($request->slug);
+        $article->author = $request->author;
+        $article->content = $request->content;
+        $article->status = $request->status;
+        $article->save();
 
         //save Temp Image here
         if($request->imageId>0){
@@ -60,56 +57,57 @@ class ProjectController extends Controller
                 $extArray = explode('.', $tempImage->name);
                 $ext = last($extArray);
 
-                $fileName = strtotime('now').$project->id.'.'.$ext;
+                $fileName = strtotime('now').$article->id.'.'.$ext;
 
                 //creat small thumbnailhere
                 $sourcePath = public_path('uploads/temp/'.$tempImage->name);
-                $destPath = public_path('uploads/projects/small/'.$fileName);
+                $destPath = public_path('uploads/articles/small/'.$fileName);
                 $manager = new ImageManager(Driver::class);
                 $image = $manager->read($sourcePath);
-                $image->coverDown(500, 600);
+                $image->coverDown(450, 300);
                 $image->save($destPath);
 
                 //creat large thumbnailhere
-                $destPath = public_path('uploads/projects/large/'.$fileName);
+                $destPath = public_path('uploads/articles/large/'.$fileName);
                 $manager = new ImageManager(Driver::class);
                 $image = $manager->read($sourcePath);
                 $image->scaleDown(1200);
                 $image->save($destPath);
 
-                $project->image = $fileName;
-                $project->save();
+                $article->image = $fileName;
+                $article->save();
             }
         }
+
         return response()->json([
             'status' => true,
-            'message' => 'Projet ajouter avec succés',
+            'message' => 'Article ajouter avec succés',
         ]);
     }
 
     public function show($id)
     {
-        $project = Project::find($id);
+        $article = Article::find($id);
 
-        if($project == null){
+        if($article == null){
             return response()->json([
                 'status' => false,
-                'message' => 'Projet non trouvé',
+                'message' => 'article non trouvé',
                 ]);
         };
         return response()->json([
             'status' => true,
-            'data' => $project
+            'data' => $article
         ]);
     }
 
     public function update(Request $request, $id){
 
-        $project = Project::find($id);
-        if($project == null){
+        $article = Article::find($id);
+        if($article == null){
             return response()->json([
                 'status' => false,
-                'message' => 'Projet non trouvé',
+                'message' => 'article non trouvé',
                 ]);
         };
         //dammy title
@@ -127,74 +125,71 @@ class ProjectController extends Controller
         }
 
 
-        $project->title = $request->title;
-        $project->slug =Str::slug($request->slug);
-        $project->short_desc = $request->short_desc;
-        $project->content = $request->content;
-        $project->construction_type = $request->construction_type;
-        $project->sector = $request->sector;
-        $project->location = $request->location;
-        $project->status = $request->status;
-        $project->save();
+        $article->title = $request->title;
+        $article->slug =Str::slug($request->slug);
+        $article->author = $request->author;
+        $article->content = $request->content;
+        $article->status = $request->status;
+        $article->save();
 
         //save Temp Image here
         if($request->imageId>0){
-            $oldImage = $project->image;
+            $oldImage = $article->image;
 
             $tempImage = TempImage::find($request->imageId);
             if ($tempImage != null) {
                 $extArray = explode('.', $tempImage->name);
                 $ext = last($extArray);
 
-                $fileName = strtotime('now').$project->id.'.'.$ext;
+                $fileName = strtotime('now').$article->id.'.'.$ext;
 
                 //creat small thumbnailhere
                 $sourcePath = public_path('uploads/temp/'.$tempImage->name);
-                $destPath = public_path('uploads/projects/small/'.$fileName);
+                $destPath = public_path('uploads/articles/small/'.$fileName);
                 $manager = new ImageManager(Driver::class);
                 $image = $manager->read($sourcePath);
                 $image->coverDown(500, 600);
                 $image->save($destPath);
 
                 //creat large thumbnailhere
-                $destPath = public_path('uploads/projects/large/'.$fileName);
+                $destPath = public_path('uploads/articles/large/'.$fileName);
                 $manager = new ImageManager(Driver::class);
                 $image = $manager->read($sourcePath);
                 $image->scaleDown(1200);
                 $image->save($destPath);
 
-                $project->image = $fileName;
-                $project->save();
+                $article->image = $fileName;
+                $article->save();
             }
             //delete old image
             if ($oldImage) {
-                File::delete(public_path('uploads/projects/small/' . $oldImage),);
-                File::delete(public_path('uploads/projects/large/' . $oldImage),);
+                File::delete(public_path('uploads/articles/small/' . $oldImage),);
+                File::delete(public_path('uploads/articles/large/' . $oldImage),);
             }
         }
         return response()->json([
             'status' => true,
-            'message' => 'Projet modifier avec succés',
+            'message' => 'article modifier avec succés',
         ]);
     }
 
     public function destroy($id)
     {
-        $project = Project::find($id);
-        if($project == null){
+        $article = Article::find($id);
+        if($article == null){
             return response()->json([
                 'status' => false,
-                'message' => 'Project non trouvé',
+                'message' => 'article non trouvé',
                 ]);
         };
-        File::delete(public_path('uploads/projects/small/' . $project->image),);
-        File::delete(public_path('uploads/projects/large/' . $project->image),);
+        File::delete(public_path('uploads/projects/small/' . $article->image),);
+        File::delete(public_path('uploads/projects/large/' . $article->image),);
 
-        $project->delete();
+        $article->delete();
 
         return response()->json([
             'status' => true,
-            'message' => 'Project supprimé avec succés',
+            'message' => 'article supprimé avec succés',
         ]);
     }
 }
